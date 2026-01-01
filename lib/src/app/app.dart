@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schedule_management/src/app/features/splash/screens/splash_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_management/src/app/features/auth/bloc/auth_bloc.dart';
+import 'package:schedule_management/src/app/routes/app_routes.dart';
 import 'package:schedule_management/src/core/utils/theme/app_theme.dart';
 
 class SchedulerApp extends StatelessWidget {
@@ -7,10 +9,13 @@ class SchedulerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Schedule Management App',
-      home: SplashScreen(),
-      theme: AppTheme.appTheme,
+    return BlocProvider(
+      create: (context) => AuthBloc()..add(AppStarted()),
+      child: MaterialApp.router(
+        title: 'Schedule Management App',
+        routerConfig: AppRoutes.router,
+        theme: AppTheme.appTheme,
+      ),
     );
   }
 }
