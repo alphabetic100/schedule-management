@@ -1,4 +1,4 @@
-package com.user.scheduler.app-manager
+package com.user.scheduler.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -27,67 +27,51 @@ class AuthScreen extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(child: Image.asset(ImagePath.onBoarding)),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Center(child: Image.asset(ImagePath.onBoarding)),
+                ),
+                Text(
+                  'Welcome to\nSchedule Manager',
+                  textAlign: TextAlign.left,
+                  style: context.displayLarge.copyWith(
+                    color: AppColors.primaryColor,
                   ),
-                  Text(
-                    'Welcome to\nSchedule Manager',
-                    textAlign: TextAlign.left,
-                    style: context.displayLarge.copyWith(
-                      color: AppColors.primaryColor,
-                    ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Manage your time efficiently and never miss an important task.',
+                  style: context.bodyMedium.copyWith(
+                    color: AppColors.secondaryTextColor,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Manage your time efficiently and never miss an important task.',
-                    style: context.bodyMedium.copyWith(
-                      color: AppColors.secondaryTextColor,
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  _SocialButton(
-                    onTap:
-                        () => context.read<AuthBloc>().add(SignInWithGoogle()),
-                    label: 'Continue with Google',
-                    icon: IconPath.googleIcon,
-                    color: const Color(0xFF2E7D32),
-                    isLoading:
-                        state is AuthLoading &&
-                        state.method == AuthMethod.google,
-                  ),
-                  const SizedBox(height: 16),
-                  _SocialButton(
-                    onTap:
-                        () =>
-                            context.read<AuthBloc>().add(SignInWithFacebook()),
-                    label: 'Continue with Facebook',
-                    icon: IconPath.facebookIcon,
-                    color: const Color(0xFF145DBF),
-                    isLoading:
-                        state is AuthLoading &&
-                        state.method == AuthMethod.facebook,
-                  ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: InkWell(
-                      onTap: () {},
-                      child: Text(
-                        'Continue without an account',
-                        style: context.bodyMedium.copyWith(
-                          color: AppColors.primaryTextColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 25),
+                _SocialButton(
+                  onTap: () => context.read<AuthBloc>().add(SignInWithGoogle()),
+                  label: 'Continue with Google',
+                  icon: IconPath.googleIcon,
+                  color: const Color(0xFF2E7D32),
+                  isLoading:
+                      state is AuthLoading && state.method == AuthMethod.google,
+                ),
+                const SizedBox(height: 16),
+                _SocialButton(
+                  onTap:
+                      () => context.read<AuthBloc>().add(SignInWithFacebook()),
+                  label: 'Continue with Facebook',
+                  icon: IconPath.facebookIcon,
+                  color: const Color(0xFF145DBF),
+                  isLoading:
+                      state is AuthLoading &&
+                      state.method == AuthMethod.facebook,
+                ),
+                SizedBox(height: 30),
+              ],
             ),
           ),
         );

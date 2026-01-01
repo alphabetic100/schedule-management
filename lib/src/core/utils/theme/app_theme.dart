@@ -13,11 +13,11 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primaryColor,
         titleTextStyle: TextStyle(
-          color: AppColors.primaryTextColor,
+          color: AppColors.white,
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: AppColors.primaryTextColor),
+        iconTheme: IconThemeData(color: AppColors.white),
       ),
       brightness: Brightness.light,
     );

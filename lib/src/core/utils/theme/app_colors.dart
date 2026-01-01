@@ -7,4 +7,6 @@ class AppColors {
   static Color get backgroundColor => Color(0xFFF5F5F5);
   static Color get primaryTextColor => Color(0xFF350000);
   static Color get secondaryTextColor => Color(0xFF9B9B9B);
+
+  static const Color white = Colors.white;
 }
