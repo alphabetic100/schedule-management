@@ -77,10 +77,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading(AuthMethod.facebook));
     try {
-      // Facebook Sign-In is not yet implemented in AuthRepositoryImpl
-      emit(AuthFailure("Facebook Sign-In not implemented yet."));
+      final user = await _authRepository.signInWithFacebook();
+      if (user != null) {
+        emit(Authenticated());
+      } else {
+        emit(Unauthenticated());
+      }
     } catch (e) {
       emit(AuthFailure(e.toString()));
+      log(e.toString());
     }
   }
 

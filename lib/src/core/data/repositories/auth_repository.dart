@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:schedule_management/src/core/data/models/user_model.dart';
 import 'package:schedule_management/src/core/utils/constants/app_secreet.dart';
@@ -65,24 +66,31 @@ class AuthRepository {
       final User? firebaseUser = userCredential.user;
 
       if (firebaseUser != null) {
-        final userDoc =
-            await _firestore.collection('users').doc(firebaseUser.uid).get();
+        return await _handleUserDocument(firebaseUser);
+      }
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-        if (!userDoc.exists) {
-          final newUser = UserModel(
-            id: firebaseUser.uid,
-            email: firebaseUser.email ?? '',
-            name: firebaseUser.displayName,
-            photoUrl: firebaseUser.photoURL,
-            createdAt: DateTime.now(),
-          );
-          await _firestore
-              .collection('users')
-              .doc(firebaseUser.uid)
-              .set(newUser.toFirestore());
-          return newUser;
-        } else {
-          return UserModel.fromFirestore(userDoc);
+  Future<UserModel?> signInWithFacebook() async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (result.status == LoginStatus.success) {
+        final OAuthCredential credential = FacebookAuthProvider.credential(
+          result.accessToken!.tokenString,
+        );
+
+        final UserCredential userCredential = await _firebaseAuth
+            .signInWithCredential(credential);
+        final User? firebaseUser = userCredential.user;
+
+        if (firebaseUser != null) {
+          return await _handleUserDocument(firebaseUser);
         }
       }
       return null;
@@ -91,8 +99,34 @@ class AuthRepository {
     }
   }
 
+  Future<UserModel?> _handleUserDocument(User firebaseUser) async {
+    final userDoc =
+        await _firestore.collection('users').doc(firebaseUser.uid).get();
+
+    if (!userDoc.exists) {
+      final newUser = UserModel(
+        id: firebaseUser.uid,
+        email: firebaseUser.email ?? '',
+        name: firebaseUser.displayName,
+        photoUrl: firebaseUser.photoURL,
+        createdAt: DateTime.now(),
+      );
+      await _firestore
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .set(newUser.toFirestore());
+      return newUser;
+    } else {
+      return UserModel.fromFirestore(userDoc);
+    }
+  }
+
   Future<void> signOut() async {
-    await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
+    await Future.wait([
+      _firebaseAuth.signOut(),
+      _googleSignIn.signOut(),
+      FacebookAuth.instance.logOut(),
+    ]);
   }
 
   Future<UserModel?> getCurrentUser() async {
