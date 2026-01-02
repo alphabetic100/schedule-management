@@ -19,7 +19,13 @@ class AuthLoading extends AuthState {
   List<Object> get props => [if (method != null) method!];
 }
 
-class Authenticated extends AuthState {}
+class Authenticated extends AuthState {
+  final UserModel user;
+  const Authenticated(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
 
 class Unauthenticated extends AuthState {}
 

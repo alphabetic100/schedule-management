@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_management/src/core/data/models/user_model.dart';
 import 'package:schedule_management/src/core/data/repositories/auth_repository.dart';
 
 part 'auth_event.dart';
@@ -47,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final user = await _authRepository.getCurrentUser();
 
     if (user != null) {
-      emit(Authenticated());
+      emit(Authenticated(user));
     } else {
       emit(Unauthenticated());
     }
@@ -61,7 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.signInWithGoogle();
       if (user != null) {
-        emit(Authenticated());
+        emit(Authenticated(user));
       } else {
         emit(Unauthenticated());
       }
@@ -79,7 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.signInWithFacebook();
       if (user != null) {
-        emit(Authenticated());
+        emit(Authenticated(user));
       } else {
         emit(Unauthenticated());
       }

@@ -1,22 +1,22 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:schedule_management/src/core/data/models/user_model.dart';
+import 'package:schedule_management/src/core/service/firebase_service.dart';
 import 'package:schedule_management/src/core/utils/constants/app_secreet.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn;
+  final FirebaseService _firebaseService;
 
   AuthRepository({
     FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firestore,
     GoogleSignIn? googleSignIn,
+    FirebaseService? firebaseService,
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-       _firestore = firestore ?? FirebaseFirestore.instance,
-       _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+       _googleSignIn = googleSignIn ?? GoogleSignIn.instance,
+       _firebaseService = firebaseService ?? FirebaseService();
 
   Future<void> initialize() async {
     await _googleSignIn.initialize(
@@ -29,11 +29,8 @@ class AuthRepository {
     return _firebaseAuth.authStateChanges().asyncMap((firebaseUser) async {
       if (firebaseUser == null) return null;
 
-      final userDoc =
-          await _firestore.collection('users').doc(firebaseUser.uid).get();
-      if (userDoc.exists) {
-        return UserModel.fromFirestore(userDoc);
-      }
+      final user = await _firebaseService.getUser(firebaseUser.uid);
+      if (user != null) return user;
 
       return UserModel(
         id: firebaseUser.uid,
@@ -100,10 +97,9 @@ class AuthRepository {
   }
 
   Future<UserModel?> _handleUserDocument(User firebaseUser) async {
-    final userDoc =
-        await _firestore.collection('users').doc(firebaseUser.uid).get();
+    final existingUser = await _firebaseService.getUser(firebaseUser.uid);
 
-    if (!userDoc.exists) {
+    if (existingUser == null) {
       final newUser = UserModel(
         id: firebaseUser.uid,
         email: firebaseUser.email ?? '',
@@ -111,13 +107,10 @@ class AuthRepository {
         photoUrl: firebaseUser.photoURL,
         createdAt: DateTime.now(),
       );
-      await _firestore
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .set(newUser.toFirestore());
+      await _firebaseService.saveUser(newUser);
       return newUser;
     } else {
-      return UserModel.fromFirestore(userDoc);
+      return existingUser;
     }
   }
 
@@ -133,11 +126,9 @@ class AuthRepository {
     final firebaseUser = _firebaseAuth.currentUser;
     if (firebaseUser == null) return null;
 
-    final userDoc =
-        await _firestore.collection('users').doc(firebaseUser.uid).get();
-    if (userDoc.exists) {
-      return UserModel.fromFirestore(userDoc);
-    }
+    final user = await _firebaseService.getUser(firebaseUser.uid);
+    if (user != null) return user;
+
     return UserModel(
       id: firebaseUser.uid,
       email: firebaseUser.email ?? '',
