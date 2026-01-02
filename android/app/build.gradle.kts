@@ -17,7 +17,10 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+val min_sdk_version = 23
+
 android {
+
     namespace = "com.user.scheduler.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
@@ -36,7 +39,7 @@ android {
         applicationId = "com.user.scheduler.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = min_sdk_version
         targetSdk = 33
         versionCode = flutter.versionCode
         versionName = flutter.versionName

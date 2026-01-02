@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schedule_management/src/core/utils/constants/icon_paths.dart';
 import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
 
 class CustomBottomNavbar extends StatelessWidget {
@@ -17,14 +18,41 @@ class CustomBottomNavbar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       backgroundColor: AppColors.backgroundColor,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+      selectedItemColor: AppColors.primaryColor,
+      unselectedItemColor: AppColors.secondaryTextColor,
+      type: BottomNavigationBarType.fixed,
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.schedule_outlined),
+          icon: Image.asset(
+            IconPath.homeIcon,
+            width: 20,
+            height: 20,
+            color: currentIndex == 0
+                ? AppColors.primaryColor
+                : AppColors.secondaryTextColor,
+          ),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            IconPath.calandarIcon,
+            width: 20,
+            height: 20,
+            color: currentIndex == 1
+                ? AppColors.primaryColor
+                : AppColors.secondaryTextColor,
+          ),
           label: 'Schedules',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
+          icon: Image.asset(
+            IconPath.settingsIcon,
+            width: 20,
+            height: 20,
+            color: currentIndex == 2
+                ? AppColors.primaryColor
+                : AppColors.secondaryTextColor,
+          ),
           label: 'Settings',
         ),
       ],

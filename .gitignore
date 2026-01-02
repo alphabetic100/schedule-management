@@ -47,3 +47,4 @@ app.*.map.json
 /lib/src/core/utils/constants/app_secreet.dart
 
 key.properties
+shorebird.yaml
