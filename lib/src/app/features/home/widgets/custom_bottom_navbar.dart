@@ -27,9 +27,10 @@ class CustomBottomNavbar extends StatelessWidget {
             IconPath.homeIcon,
             width: 20,
             height: 20,
-            color: currentIndex == 0
-                ? AppColors.primaryColor
-                : AppColors.secondaryTextColor,
+            color:
+                currentIndex == 0
+                    ? AppColors.primaryColor
+                    : AppColors.secondaryTextColor,
           ),
           label: 'Home',
         ),
@@ -38,9 +39,10 @@ class CustomBottomNavbar extends StatelessWidget {
             IconPath.calandarIcon,
             width: 20,
             height: 20,
-            color: currentIndex == 1
-                ? AppColors.primaryColor
-                : AppColors.secondaryTextColor,
+            color:
+                currentIndex == 1
+                    ? AppColors.primaryColor
+                    : AppColors.secondaryTextColor,
           ),
           label: 'Schedules',
         ),
@@ -49,9 +51,10 @@ class CustomBottomNavbar extends StatelessWidget {
             IconPath.settingsIcon,
             width: 20,
             height: 20,
-            color: currentIndex == 2
-                ? AppColors.primaryColor
-                : AppColors.secondaryTextColor,
+            color:
+                currentIndex == 2
+                    ? AppColors.primaryColor
+                    : AppColors.secondaryTextColor,
           ),
           label: 'Settings',
         ),
