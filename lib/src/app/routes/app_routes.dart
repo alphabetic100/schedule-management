@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:schedule_management/src/app/features/auth/screens/auth_screen.dart';
 import 'package:schedule_management/src/app/features/home/screens/home_screen.dart';
 import 'package:schedule_management/src/app/features/home/widgets/scaffold_with_nav.dart';
+import 'package:schedule_management/src/app/features/schedules/screens/create_schedule_screen.dart';
 import 'package:schedule_management/src/app/features/schedules/screens/schedule_screen.dart';
 import 'package:schedule_management/src/app/features/settings/screens/settings_screen.dart';
 import 'package:schedule_management/src/app/features/splash/screens/splash_screen.dart';
@@ -40,6 +41,11 @@ class AppRoutes {
       GoRoute(
         path: RouteName.auth,
         builder: (context, state) => const AuthScreen(),
+      ),
+
+      GoRoute(
+        path: RouteName.createSchedule,
+        builder: (context, state) => const CreateScheduleScreen(),
       ),
     ],
   );

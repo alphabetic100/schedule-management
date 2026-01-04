@@ -38,6 +38,9 @@ dependencies:
   ## Social Authentication
   google_sign_in: ^7.2.0
   flutter_facebook_auth: ^7.1.2
+
+  ## Table Calander
+  table_calendar: ^3.2.0
   
 
 dev_dependencies:
