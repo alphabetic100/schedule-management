@@ -7,4 +7,6 @@ class IconPath {
   static const String homeIcon = '$_basePath/home.png';
   static const String calandarIcon = '$_basePath/calendar.png';
   static const String settingsIcon = '$_basePath/settings.png';
+
+  static const String boxIcon = '$_basePath/box.png';
 }

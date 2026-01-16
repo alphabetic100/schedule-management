@@ -5,4 +5,6 @@ class ImagePath {
   static const String emptyState = '$_basePath/onboarding1.png';
 
   static const String notificationPermission = '$_basePath/notification.png';
+
+  static const String emtpySchedule = '$_basePath/empty_schedule.png';
 }
