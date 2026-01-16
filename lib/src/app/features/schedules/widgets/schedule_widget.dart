@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:schedule_management/src/core/data/models/schedule_model.dart';
 import 'package:schedule_management/src/core/extensions/text_style.dart';
 import 'package:schedule_management/src/core/utils/constants/icon_paths.dart';
 import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
 
 class ScheduleWidget extends StatelessWidget {
-  const ScheduleWidget({super.key});
+  final ScheduleModel schedule;
+
+  const ScheduleWidget({super.key, required this.schedule});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.only(left: 6),
       decoration: BoxDecoration(
         color: AppColors.primaryColor,
@@ -35,7 +40,10 @@ class ScheduleWidget extends StatelessWidget {
                   color: AppColors.primaryColor,
                 ),
                 SizedBox(width: 8),
-                Text('3:00 PM - 4:30 PM', style: context.bodySmall),
+                Text(
+                  '${DateFormat('h:mm a').format(schedule.startTime)} - ${DateFormat('h:mm a').format(schedule.endTime)}',
+                  style: context.bodySmall,
+                ),
               ],
             ),
             SizedBox(height: 6),
@@ -43,7 +51,7 @@ class ScheduleWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Schedule Name',
+                  schedule.title,
                   style: context.bodyLarge.copyWith(
                     color: AppColors.primaryTextColor,
                     fontWeight: FontWeight.bold,
@@ -51,7 +59,7 @@ class ScheduleWidget extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  'Collaborative session with the international team in Tokyo. The application has factored in the time zone difference and suggested an optimal meeting time.',
+                  schedule.description,
                   style: context.bodySmall.copyWith(),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
