@@ -12,7 +12,9 @@ class WeekViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ScheduleBloc, ScheduleState>(
       buildWhen:
-          (previous, current) => previous.selectedDate != current.selectedDate,
+          (previous, current) =>
+              previous.selectedDate != current.selectedDate ||
+              previous.events != current.events,
       builder: (context, state) {
         final selectedDate = state.selectedDate;
         final weekDays = _getWeekDays(selectedDate);
@@ -39,8 +41,7 @@ class WeekViewWidget extends StatelessWidget {
                   children:
                       weekDays.map((day) {
                         final isSelected = isSameDay(day, selectedDate);
-                        final events = ScheduleBloc.getDummySchedules(day);
-                        final hasEvents = events.isNotEmpty;
+                        final dayStart = DateTime(day.year, day.month, day.day);
 
                         return Expanded(
                           child: GestureDetector(
@@ -93,27 +94,38 @@ class WeekViewWidget extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  if (hasEvents)
+                                  if (state.events[dayStart] != null)
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: List.generate(
-                                        events.length > 3 ? 3 : events.length,
-                                        (i) => Container(
-                                          width: 5,
-                                          height: 5,
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 1,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                isSelected
-                                                    ? Colors.white
-                                                    : AppColors.primaryColor,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                      ),
+                                      children:
+                                          state.events[dayStart]!.take(3).map((
+                                            schedule,
+                                          ) {
+                                            return Container(
+                                              width: 4,
+                                              height: 4,
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 1,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    isSelected
+                                                        ? Colors.white
+                                                        : Color(
+                                                          schedule.colorValue,
+                                                        ).withValues(
+                                                          alpha:
+                                                              schedule
+                                                                  .colorOpacity,
+                                                        ),
+                                                shape: BoxShape.rectangle,
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                            );
+                                          }).toList(),
                                     ),
                                 ],
                               ),
@@ -131,7 +143,6 @@ class WeekViewWidget extends StatelessWidget {
   }
 
   List<DateTime> _getWeekDays(DateTime date) {
-    // Optimization: Calculate start of week once
     final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
   }

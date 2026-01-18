@@ -15,3 +15,7 @@ class ScheduleSelectedDateChanged extends ScheduleEvent {
   @override
   List<Object> get props => [selectedDate];
 }
+
+class ScheduleRefreshed extends ScheduleEvent {
+  const ScheduleRefreshed();
+}

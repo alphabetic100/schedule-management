@@ -34,6 +34,9 @@ dependencies:
   ## Equatable for Bloc
   equatable: ^2.0.7
 
+  ## UUID for ID generation
+  uuid: ^4.5.1
+
   ## Social Authentication
   google_sign_in: ^7.2.0
   flutter_facebook_auth: ^7.1.2

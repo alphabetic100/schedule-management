@@ -16,13 +16,19 @@ class ScheduleWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.only(left: 6),
       decoration: BoxDecoration(
-        color: AppColors.primaryColor,
+        color: Color(
+          schedule.colorValue,
+        ).withValues(alpha: schedule.colorOpacity),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: AppColors.primaryColor),
+        border: Border.all(
+          color: Color(
+            schedule.colorValue,
+          ).withValues(alpha: schedule.colorOpacity),
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(6),
@@ -37,7 +43,9 @@ class ScheduleWidget extends StatelessWidget {
                 Image.asset(
                   IconPath.boxIcon,
                   height: 20,
-                  color: AppColors.primaryColor,
+                  color: Color(
+                    schedule.colorValue,
+                  ).withValues(alpha: schedule.colorOpacity),
                 ),
                 SizedBox(width: 8),
                 Text(
