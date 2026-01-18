@@ -51,7 +51,9 @@ class ScheduleScreen extends StatelessWidget {
                               child: ClipRect(
                                 child: OverflowBox(
                                   maxHeight: double.infinity,
-                                  child: const ScheduleCalanderView(),
+                                  child: const RepaintBoundary(
+                                    child: ScheduleCalanderView(),
+                                  ),
                                 ),
                               ),
                             ),
@@ -63,7 +65,9 @@ class ScheduleScreen extends StatelessWidget {
                               bottom: 0,
                               child: Opacity(
                                 opacity: 1 - t,
-                                child: const WeekViewWidget(),
+                                child: const RepaintBoundary(
+                                  child: WeekViewWidget(),
+                                ),
                               ),
                             ),
                         ],

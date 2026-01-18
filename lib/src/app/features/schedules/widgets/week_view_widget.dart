@@ -11,6 +11,8 @@ class WeekViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ScheduleBloc, ScheduleState>(
+      buildWhen:
+          (previous, current) => previous.selectedDate != current.selectedDate,
       builder: (context, state) {
         final selectedDate = state.selectedDate;
         final weekDays = _getWeekDays(selectedDate);
@@ -32,91 +34,93 @@ class WeekViewWidget extends StatelessWidget {
               ),
               SizedBox(
                 height: 90,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: weekDays.length,
-                  itemBuilder: (context, index) {
-                    final day = weekDays[index];
-                    final isSelected = isSameDay(day, selectedDate);
-                    final events = ScheduleBloc.getDummySchedules(day);
-                    final hasEvents = events.isNotEmpty;
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children:
+                      weekDays.map((day) {
+                        final isSelected = isSameDay(day, selectedDate);
+                        final events = ScheduleBloc.getDummySchedules(day);
+                        final hasEvents = events.isNotEmpty;
 
-                    return GestureDetector(
-                      onTap: () {
-                        context.read<ScheduleBloc>().add(
-                          ScheduleSelectedDateChanged(day),
-                        );
-                      },
-                      child: Container(
-                        width: 65,
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                          color:
-                              isSelected
-                                  ? AppColors.primaryColor
-                                  : Colors.transparent,
-                          border: Border.all(
-                            color:
-                                isSelected
-                                    ? AppColors.primaryColor
-                                    : AppColors.secondaryTextColor.withValues(
-                                      alpha: 0.3,
-                                    ),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              DateFormat('EEE').format(day).substring(0, 3),
-                              style: context.bodySmall.copyWith(
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              context.read<ScheduleBloc>().add(
+                                ScheduleSelectedDateChanged(day),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
                                 color:
                                     isSelected
-                                        ? Colors.white
-                                        : AppColors.secondaryTextColor,
-                                fontWeight: FontWeight.w500,
+                                        ? AppColors.primaryColor
+                                        : Colors.transparent,
+                                border: Border.all(
+                                  color:
+                                      isSelected
+                                          ? AppColors.primaryColor
+                                          : AppColors.secondaryTextColor
+                                              .withValues(alpha: 0.3),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              DateFormat('dd').format(day),
-                              style: context.bodyLarge.copyWith(
-                                color:
-                                    isSelected
-                                        ? Colors.white
-                                        : AppColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            if (hasEvents)
-                              Row(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(
-                                  events.length > 3 ? 3 : events.length,
-                                  (i) => Container(
-                                    width: 5,
-                                    height: 5,
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 1,
-                                    ),
-                                    decoration: BoxDecoration(
+                                children: [
+                                  Text(
+                                    DateFormat(
+                                      'EEE',
+                                    ).format(day).substring(0, 3),
+                                    style: context.bodySmall.copyWith(
                                       color:
                                           isSelected
                                               ? Colors.white
-                                              : AppColors.primaryColor,
-                                      shape: BoxShape.circle,
+                                              : AppColors.secondaryTextColor,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    DateFormat('dd').format(day),
+                                    style: context.bodyLarge.copyWith(
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : AppColors.primaryTextColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  if (hasEvents)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                        events.length > 3 ? 3 : events.length,
+                                        (i) => Container(
+                                          width: 5,
+                                          height: 5,
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 1,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isSelected
+                                                    ? Colors.white
+                                                    : AppColors.primaryColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                            ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               ),
             ],
@@ -127,6 +131,7 @@ class WeekViewWidget extends StatelessWidget {
   }
 
   List<DateTime> _getWeekDays(DateTime date) {
+    // Optimization: Calculate start of week once
     final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
   }

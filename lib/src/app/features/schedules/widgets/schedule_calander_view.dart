@@ -15,6 +15,9 @@ class ScheduleCalanderView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: BlocBuilder<ScheduleBloc, ScheduleState>(
+          buildWhen:
+              (previous, current) =>
+                  previous.selectedDate != current.selectedDate,
           builder: (context, state) {
             return TableCalendar(
               firstDay: DateTime.utc(2020, 1, 1),

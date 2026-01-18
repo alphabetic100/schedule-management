@@ -13,6 +13,10 @@ class ScheduleBodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ScheduleBloc, ScheduleState>(
+      buildWhen:
+          (previous, current) =>
+              previous.selectedDate != current.selectedDate ||
+              previous.schedules != current.schedules,
       builder: (context, state) {
         return CustomScrollView(
           slivers: [
