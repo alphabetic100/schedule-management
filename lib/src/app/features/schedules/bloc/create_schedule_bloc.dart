@@ -25,7 +25,32 @@ class CreateScheduleBloc
     on<NotifyToggled>(_onNotifyToggled);
     on<ColorValueChanged>(_onColorValueChanged);
     on<OpacityChanged>(_onOpacityChanged);
+    on<InitializeEditMode>(_onInitializeEditMode);
     on<SubmitSchedule>(_onSubmitSchedule);
+  }
+
+  void _onInitializeEditMode(
+    InitializeEditMode event,
+    Emitter<CreateScheduleState> emit,
+  ) {
+    final s = event.schedule;
+    emit(
+      state.copyWith(
+        title: s.title,
+        description: s.description,
+        date: s.date,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        isMeeting: s.isMeeting,
+        meetingLink: s.meetingLink,
+        launchImmediately: s.lauchImmediately,
+        isNotify: s.isNotify,
+        colorValue: s.colorValue,
+        opacity: s.colorOpacity,
+        initialSchedule: s,
+        status: CreateScheduleStatus.initial,
+      ),
+    );
   }
 
   void _onColorValueChanged(
@@ -183,23 +208,65 @@ class CreateScheduleBloc
     emit(state.copyWith(status: CreateScheduleStatus.loading));
 
     try {
-      final newSchedule = ScheduleModel(
-        id: const Uuid().v4(),
-        title: state.title,
-        description: state.description,
-        date: state.date!,
-        startTime: state.startTime!,
-        endTime: state.endTime!,
-        isMeeting: state.isMeeting,
-        meetingLink: state.meetingLink,
-        lauchImmediately: state.launchImmediately,
-        isNotify: state.isNotify,
-        colorValue: state.colorValue,
-        colorOpacity: state.opacity,
+      final scheduleDate = state.date!;
+      // Ensure startTime and endTime have the correct date component
+      final normalizedStart = DateTime(
+        scheduleDate.year,
+        scheduleDate.month,
+        scheduleDate.day,
+        state.startTime!.hour,
+        state.startTime!.minute,
+      );
+      var normalizedEnd = DateTime(
+        scheduleDate.year,
+        scheduleDate.month,
+        scheduleDate.day,
+        state.endTime!.hour,
+        state.endTime!.minute,
       );
 
-      await _scheduleRepository.addSchedule(newSchedule);
-      emit(state.copyWith(status: CreateScheduleStatus.success));
+      // If end time is before start time, it means it ends the next day
+      if (normalizedEnd.isBefore(normalizedStart)) {
+        normalizedEnd = normalizedEnd.add(const Duration(days: 1));
+      }
+
+      final schedule =
+          state.isEdit
+              ? state.initialSchedule!.copyWith(
+                title: state.title,
+                description: state.description,
+                date: scheduleDate,
+                startTime: normalizedStart,
+                endTime: normalizedEnd,
+                isMeeting: state.isMeeting,
+                meetingLink: state.meetingLink,
+                lauchImmediately: state.launchImmediately,
+                isNotify: state.isNotify,
+                colorValue: state.colorValue,
+                colorOpacity: state.opacity,
+              )
+              : ScheduleModel(
+                id: const Uuid().v4(),
+                title: state.title,
+                description: state.description,
+                date: scheduleDate,
+                startTime: normalizedStart,
+                endTime: normalizedEnd,
+                isMeeting: state.isMeeting,
+                meetingLink: state.meetingLink,
+                lauchImmediately: state.launchImmediately,
+                isNotify: state.isNotify,
+                colorValue: state.colorValue,
+                colorOpacity: state.opacity,
+              );
+
+      await _scheduleRepository.addSchedule(schedule);
+      emit(
+        state.copyWith(
+          status: CreateScheduleStatus.success,
+          finalSchedule: schedule,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(

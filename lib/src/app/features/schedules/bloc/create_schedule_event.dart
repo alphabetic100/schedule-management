@@ -84,6 +84,13 @@ class OpacityChanged extends CreateScheduleEvent {
   List<Object?> get props => [opacity];
 }
 
+class InitializeEditMode extends CreateScheduleEvent {
+  final ScheduleModel schedule;
+  const InitializeEditMode(this.schedule);
+  @override
+  List<Object?> get props => [schedule];
+}
+
 class SubmitSchedule extends CreateScheduleEvent {
   const SubmitSchedule();
 }

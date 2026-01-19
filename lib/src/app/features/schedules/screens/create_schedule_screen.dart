@@ -7,6 +7,7 @@ import 'package:schedule_management/src/app/features/schedules/bloc/create_sched
 import 'package:schedule_management/src/app/features/schedules/mixins/time_picker_mixin.dart';
 import 'package:schedule_management/src/app/features/schedules/widgets/schedule_form_widgets.dart';
 import 'package:schedule_management/src/core/common/widgets/custom_button.dart';
+import 'package:schedule_management/src/core/data/models/schedule_model.dart';
 import 'package:schedule_management/src/core/data/repositories/schedule_repository.dart';
 import 'package:schedule_management/src/core/di/service_locator.dart';
 import 'package:schedule_management/src/core/extensions/text_style.dart';
@@ -14,21 +15,29 @@ import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CreateScheduleScreen extends StatelessWidget {
-  const CreateScheduleScreen({super.key});
+  final ScheduleModel? initialSchedule;
+  const CreateScheduleScreen({super.key, this.initialSchedule});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) =>
-              CreateScheduleBloc(scheduleRepository: sl<ScheduleRepository>()),
-      child: const CreateScheduleView(),
+      create: (context) {
+        final bloc = CreateScheduleBloc(
+          scheduleRepository: sl<ScheduleRepository>(),
+        );
+        if (initialSchedule != null) {
+          bloc.add(InitializeEditMode(initialSchedule!));
+        }
+        return bloc;
+      },
+      child: CreateScheduleView(initialSchedule: initialSchedule),
     );
   }
 }
 
 class CreateScheduleView extends StatefulWidget {
-  const CreateScheduleView({super.key});
+  final ScheduleModel? initialSchedule;
+  const CreateScheduleView({super.key, this.initialSchedule});
 
   @override
   State<CreateScheduleView> createState() => _CreateScheduleViewState();
@@ -36,13 +45,28 @@ class CreateScheduleView extends StatefulWidget {
 
 class _CreateScheduleViewState extends State<CreateScheduleView>
     with TimePickerMixin {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _meetingLinkController = TextEditingController();
+  late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
+  late final TextEditingController _meetingLinkController;
+
   final _titleFocus = FocusNode();
   final _descriptionFocus = FocusNode();
   final _meetingLinkFocus = FocusNode();
   bool _isCalendarExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(
+      text: widget.initialSchedule?.title ?? '',
+    );
+    _descriptionController = TextEditingController(
+      text: widget.initialSchedule?.description ?? '',
+    );
+    _meetingLinkController = TextEditingController(
+      text: widget.initialSchedule?.meetingLink ?? '',
+    );
+  }
 
   @override
   void dispose() {
@@ -63,9 +87,9 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
       listener: (context, state) {
         if (state.status == CreateScheduleStatus.success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Schedule created successfully')),
+            const SnackBar(content: Text('Schedule updated successfully')),
           );
-          context.pop();
+          context.pop(state.finalSchedule);
         } else if (state.status == CreateScheduleStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -84,7 +108,7 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                 state.colorValue,
               ).withValues(alpha: state.opacity),
               elevation: 0,
-              title: const Text('Create Schedule'),
+              title: Text(state.isEdit ? 'Edit Schedule' : 'Create Schedule'),
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new, size: 20),
@@ -437,6 +461,8 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                       label:
                           state.status == CreateScheduleStatus.loading
                               ? 'SAVING...'
+                              : state.isEdit
+                              ? 'UPDATE SCHEDULE'
                               : 'SAVE SCHEDULE',
                       color: Color(
                         state.colorValue,

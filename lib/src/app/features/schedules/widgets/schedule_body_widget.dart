@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:schedule_management/src/app/features/schedules/bloc/schedule_bloc.dart';
 import 'package:schedule_management/src/app/features/schedules/widgets/empty_schedule_widget.dart';
 import 'package:schedule_management/src/app/features/schedules/widgets/schedule_widget.dart';
+import 'package:schedule_management/src/app/features/schedules/widgets/shimmer_loading.dart';
 import 'package:schedule_management/src/core/extensions/text_style.dart';
 import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
 
@@ -16,7 +17,8 @@ class ScheduleBodyWidget extends StatelessWidget {
       buildWhen:
           (previous, current) =>
               previous.selectedDate != current.selectedDate ||
-              previous.schedules != current.schedules,
+              previous.schedules != current.schedules ||
+              previous.isLoading != current.isLoading,
       builder: (context, state) {
         return CustomScrollView(
           slivers: [
@@ -29,7 +31,44 @@ class ScheduleBodyWidget extends StatelessWidget {
               delegate: _DateHeaderDelegate(selectedDate: state.selectedDate),
             ),
 
-            if (state.schedules.isEmpty)
+            if (state.isLoading)
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top:
+                            index == 0
+                                ? BorderSide(
+                                  width: 1,
+                                  color: AppColors.primaryColor,
+                                )
+                                : BorderSide.none,
+                        left: BorderSide(
+                          width: 1,
+                          color: AppColors.primaryColor,
+                        ),
+                        right: BorderSide(
+                          width: 1,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      color: Colors.white,
+                    ),
+                    padding: EdgeInsets.only(
+                      top: index == 0 ? 20 : 0,
+                      left: 16,
+                      right: 16,
+                      bottom: index == 4 ? 10 : 0,
+                    ),
+                    child: const ShimmerLoading(
+                      isLoading: true,
+                      child: _ScheduleShimmerSkeleton(),
+                    ),
+                  );
+                }, childCount: 5),
+              )
+            else if (state.schedules.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Container(
@@ -78,10 +117,6 @@ class ScheduleBodyWidget extends StatelessWidget {
                         ),
                       ),
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8),
-                        topRight: Radius.circular(8),
-                      ),
                     ),
                     padding: EdgeInsets.only(
                       top: index == 0 ? 20 : 0,
@@ -116,6 +151,76 @@ class ScheduleBodyWidget extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _ScheduleShimmerSkeleton extends StatelessWidget {
+  const _ScheduleShimmerSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(left: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(6),
+            bottomRight: Radius.circular(6),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 100,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              height: 18,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: 150,
+              height: 12,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

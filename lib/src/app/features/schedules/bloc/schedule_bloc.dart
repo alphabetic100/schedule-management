@@ -15,13 +15,26 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     on<ScheduleSelectedDateChanged>(_onSelectedDateChanged);
     on<ScheduleRefreshed>(_onScheduleRefreshed);
 
+    on<ScheduleDeleted>(_onScheduleDeleted);
+
     add(ScheduleSelectedDateChanged(DateTime.now()));
+  }
+
+  Future<void> _onScheduleDeleted(
+    ScheduleDeleted event,
+    Emitter<ScheduleState> emit,
+  ) async {
+    await _scheduleRepository.deleteSchedule(event.id);
+    add(const ScheduleRefreshed());
   }
 
   Future<void> _onSelectedDateChanged(
     ScheduleSelectedDateChanged event,
     Emitter<ScheduleState> emit,
   ) async {
+    // Emit immediate date change with loading true
+    emit(state.copyWith(selectedDate: event.selectedDate, isLoading: true));
+
     final schedules = await _scheduleRepository.getSchedules(
       event.selectedDate,
     );
@@ -47,6 +60,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         selectedDate: event.selectedDate,
         schedules: schedules,
         events: eventsMap,
+        isLoading: false,
       ),
     );
   }

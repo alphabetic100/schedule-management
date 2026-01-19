@@ -16,6 +16,8 @@ class CreateScheduleState extends Equatable {
   final double opacity;
   final CreateScheduleStatus status;
   final String? errorMessage;
+  final ScheduleModel? initialSchedule;
+  final ScheduleModel? finalSchedule;
 
   const CreateScheduleState({
     this.title = '',
@@ -31,7 +33,11 @@ class CreateScheduleState extends Equatable {
     this.opacity = 1.0,
     this.status = CreateScheduleStatus.initial,
     this.errorMessage,
+    this.initialSchedule,
+    this.finalSchedule,
   });
+
+  bool get isEdit => initialSchedule != null;
 
   CreateScheduleState copyWith({
     String? title,
@@ -47,6 +53,8 @@ class CreateScheduleState extends Equatable {
     double? opacity,
     CreateScheduleStatus? status,
     String? errorMessage,
+    ScheduleModel? initialSchedule,
+    ScheduleModel? finalSchedule,
   }) {
     return CreateScheduleState(
       title: title ?? this.title,
@@ -62,6 +70,8 @@ class CreateScheduleState extends Equatable {
       opacity: opacity ?? this.opacity,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+      initialSchedule: initialSchedule ?? this.initialSchedule,
+      finalSchedule: finalSchedule ?? this.finalSchedule,
     );
   }
 
@@ -80,5 +90,7 @@ class CreateScheduleState extends Equatable {
     opacity,
     status,
     errorMessage,
+    initialSchedule,
+    finalSchedule,
   ];
 }

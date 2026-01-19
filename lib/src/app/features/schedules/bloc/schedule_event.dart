@@ -19,3 +19,11 @@ class ScheduleSelectedDateChanged extends ScheduleEvent {
 class ScheduleRefreshed extends ScheduleEvent {
   const ScheduleRefreshed();
 }
+
+class ScheduleDeleted extends ScheduleEvent {
+  final String id;
+  const ScheduleDeleted(this.id);
+
+  @override
+  List<Object> get props => [id];
+}

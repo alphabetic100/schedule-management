@@ -5,6 +5,7 @@ abstract class ScheduleRepository {
   Future<List<ScheduleModel>> getSchedules(DateTime date);
   Future<List<ScheduleModel>> getSchedulesForMonth(DateTime month);
   Future<void> addSchedule(ScheduleModel schedule);
+  Future<void> deleteSchedule(String id);
 }
 
 class ScheduleRepositoryImpl implements ScheduleRepository {
@@ -50,5 +51,10 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
         .collection('schedules')
         .doc(schedule.id)
         .set(schedule.toMap());
+  }
+
+  @override
+  Future<void> deleteSchedule(String id) async {
+    await _firestore.collection('schedules').doc(id).delete();
   }
 }

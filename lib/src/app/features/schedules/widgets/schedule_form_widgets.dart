@@ -230,7 +230,7 @@ class ScheduleCompactSwitch extends StatelessWidget {
           child: Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryColor,
+            activeThumbColor: AppColors.primaryColor,
             trackColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
                 return AppColors.primaryColor.withValues(alpha: 0.5);
