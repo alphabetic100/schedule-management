@@ -3,10 +3,12 @@ import 'package:schedule_management/src/app/features/auth/screens/auth_screen.da
 import 'package:schedule_management/src/app/features/home/screens/home_screen.dart';
 import 'package:schedule_management/src/app/features/home/widgets/scaffold_with_nav.dart';
 import 'package:schedule_management/src/app/features/schedules/screens/create_schedule_screen.dart';
+import 'package:schedule_management/src/app/features/schedules/screens/schedule_details_screen.dart';
 import 'package:schedule_management/src/app/features/schedules/screens/schedule_screen.dart';
 import 'package:schedule_management/src/app/features/settings/screens/settings_screen.dart';
 import 'package:schedule_management/src/app/features/splash/screens/splash_screen.dart';
 import 'package:schedule_management/src/app/routes/route_name.dart';
+import 'package:schedule_management/src/core/data/models/schedule_model.dart';
 
 class AppRoutes {
   static final router = GoRouter(
@@ -46,6 +48,13 @@ class AppRoutes {
       GoRoute(
         path: RouteName.createSchedule,
         builder: (context, state) => const CreateScheduleScreen(),
+      ),
+
+      GoRoute(
+        path: RouteName.scheduleDetails,
+        builder:
+            (context, state) =>
+                ScheduleDetailsScreen(schedule: state.extra as ScheduleModel),
       ),
     ],
   );

@@ -5,4 +5,5 @@ class RouteName {
   static const String settings = '/settings';
   static const String auth = '/login';
   static const String createSchedule = '/create-schedule';
+  static const String scheduleDetails = '/schedule-details';
 }

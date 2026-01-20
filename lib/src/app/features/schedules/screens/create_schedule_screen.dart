@@ -11,6 +11,7 @@ import 'package:schedule_management/src/core/data/models/schedule_model.dart';
 import 'package:schedule_management/src/core/data/repositories/schedule_repository.dart';
 import 'package:schedule_management/src/core/di/service_locator.dart';
 import 'package:schedule_management/src/core/extensions/text_style.dart';
+import 'package:schedule_management/src/core/utils/constants/icon_paths.dart';
 import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -111,7 +112,18 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
               title: Text(state.isEdit ? 'Edit Schedule' : 'Create Schedule'),
               centerTitle: true,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
                 onPressed: () => context.pop(),
               ),
             ),
@@ -130,7 +142,7 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                     hintText: 'Schedule Title',
                     controller: _titleController,
                     focusNode: _titleFocus,
-                    icon: Icons.title,
+
                     onChanged:
                         (value) => context.read<CreateScheduleBloc>().add(
                           TitleChanged(value),
@@ -143,7 +155,6 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                     controller: _descriptionController,
                     focusNode: _descriptionFocus,
                     maxLines: 3,
-                    icon: Icons.description_outlined,
                     onChanged:
                         (value) => context.read<CreateScheduleBloc>().add(
                           DescriptionChanged(value),
@@ -160,7 +171,7 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                             : DateFormat(
                               'EEEE, MMM dd, yyyy',
                             ).format(state.date!),
-                    icon: Icons.calendar_today,
+                    icon: IconPath.dateIcon,
                     onTap: () {
                       _titleFocus.unfocus();
                       _descriptionFocus.unfocus();
@@ -282,7 +293,7 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                                   : DateFormat(
                                     'hh:mm a',
                                   ).format(state.startTime!),
-                          icon: Icons.access_time,
+                          icon: IconPath.timeIcon,
                           onTap: () {
                             _titleFocus.unfocus();
                             _descriptionFocus.unfocus();
@@ -309,7 +320,7 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                                   : DateFormat(
                                     'hh:mm a',
                                   ).format(state.endTime!),
-                          icon: Icons.access_time_filled,
+                          icon: IconPath.timeIcon,
                           onTap: () {
                             _titleFocus.unfocus();
                             _descriptionFocus.unfocus();
@@ -367,7 +378,6 @@ class _CreateScheduleViewState extends State<CreateScheduleView>
                             hintText: 'Add meeting link (optional)',
                             controller: _meetingLinkController,
                             focusNode: _meetingLinkFocus,
-                            icon: Icons.link,
                             onChanged:
                                 (value) => context
                                     .read<CreateScheduleBloc>()

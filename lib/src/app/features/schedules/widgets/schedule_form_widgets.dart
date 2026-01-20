@@ -23,7 +23,7 @@ class ScheduleTextField extends StatelessWidget {
   final String label;
   final String hintText;
   final TextEditingController controller;
-  final IconData icon;
+  final IconData? icon;
   final int maxLines;
   final ValueChanged<String> onChanged;
   final Widget? suffix;
@@ -34,7 +34,7 @@ class ScheduleTextField extends StatelessWidget {
     required this.label,
     required this.hintText,
     required this.controller,
-    required this.icon,
+    this.icon,
     this.maxLines = 1,
     required this.onChanged,
     this.suffix,
@@ -80,11 +80,14 @@ class ScheduleTextField extends StatelessWidget {
               hintStyle: context.bodyMedium.copyWith(
                 color: AppColors.secondaryTextColor.withValues(alpha: 0.5),
               ),
-              prefixIcon: Icon(
-                icon,
-                color: AppColors.secondaryTextColor,
-                size: 20,
-              ),
+              prefixIcon:
+                  icon != null
+                      ? Icon(
+                        icon,
+                        color: AppColors.secondaryTextColor,
+                        size: 20,
+                      )
+                      : null,
               suffixIcon: suffix,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -107,7 +110,7 @@ class ScheduleTextField extends StatelessWidget {
 class SchedulePickerField extends StatelessWidget {
   final String label;
   final String value;
-  final IconData icon;
+  final String icon;
   final VoidCallback onTap;
 
   const SchedulePickerField({
@@ -149,7 +152,12 @@ class SchedulePickerField extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(icon, color: AppColors.secondaryTextColor, size: 20),
+                Image.asset(
+                  icon,
+                  color: AppColors.secondaryTextColor,
+                  height: 20,
+                  width: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -230,7 +238,7 @@ class ScheduleCompactSwitch extends StatelessWidget {
           child: Switch(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: AppColors.primaryColor,
+            activeColor: AppColors.primaryColor,
             trackColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
                 return AppColors.primaryColor.withValues(alpha: 0.5);

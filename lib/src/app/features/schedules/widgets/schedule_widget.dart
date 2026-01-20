@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_management/src/app/features/schedules/bloc/schedule_bloc.dart';
+import 'package:schedule_management/src/app/routes/route_name.dart';
 import 'package:schedule_management/src/core/data/models/schedule_model.dart';
 import 'package:schedule_management/src/core/extensions/text_style.dart';
 import 'package:schedule_management/src/core/utils/constants/icon_paths.dart';
 import 'package:schedule_management/src/core/utils/theme/app_colors.dart';
-
-import 'package:schedule_management/src/app/features/schedules/screens/schedule_details_screen.dart';
 
 class ScheduleWidget extends StatelessWidget {
   final ScheduleModel schedule;
@@ -18,17 +16,7 @@ class ScheduleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        final scheduleBloc = context.read<ScheduleBloc>();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BlocProvider.value(
-                  value: scheduleBloc,
-                  child: ScheduleDetailsScreen(schedule: schedule),
-                ),
-          ),
-        );
+        context.push(RouteName.scheduleDetails, extra: schedule);
       },
       borderRadius: BorderRadius.circular(6),
       child: Container(
